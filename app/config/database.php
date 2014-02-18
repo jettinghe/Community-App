@@ -52,27 +52,27 @@ return array(
 			'prefix'   => '',
 		),
 
-		'mysql' => array(
-			'driver'    => 'mysql',
-			'host'      => 'localhost',
-			'database'  => 'community',
-			'username'  => 'justinhe',
-			'password'  => '7192732',
-			'charset'   => 'utf8',
-			'collation' => 'utf8_unicode_ci',
-			'prefix'    => '',
-		),
-
 		// 'mysql' => array(
 		// 	'driver'    => 'mysql',
 		// 	'host'      => 'localhost',
 		// 	'database'  => 'community',
-		// 	'username'  => 'root',
-		// 	'password'  => 'visa583426',
+		// 	'username'  => 'justinhe',
+		// 	'password'  => '7192732',
 		// 	'charset'   => 'utf8',
 		// 	'collation' => 'utf8_unicode_ci',
 		// 	'prefix'    => '',
 		// ),
+
+		'mysql' => array(
+			'driver'    => 'mysql',
+			'host'      => 'localhost',
+			'database'  => 'community',
+			'username'  => 'root',
+			'password'  => 'visa583426',
+			'charset'   => 'utf8',
+			'collation' => 'utf8_unicode_ci',
+			'prefix'    => '',
+		),
 
 		'pgsql' => array(
 			'driver'   => 'pgsql',
