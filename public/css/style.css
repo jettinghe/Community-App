@@ -5102,7 +5102,7 @@ a:focus {
 
 .panel-body-cats {
   padding: 8px 15px !important;
-  border-bottom: 1px solid red; }
+  border-bottom: 1px solid whitesmoke; }
 
 .topic-nav > li.active-topic-for-child-category > a {
   background-color: #989898; }
