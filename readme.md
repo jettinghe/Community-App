@@ -14,6 +14,7 @@ just demonstration only, mail queue not in use. Registration is working though b
 Alternatively,  you could use this test dev account to login directly without register.
 
 username: test@test.dev
+
 password: testdev
 
 # Upcoming functions
