@@ -7,10 +7,12 @@
 5. User register, activate, login, post, edit, etc.
 
 # Demo
-nymble.io/community
+http://nymble.io/community
+
 just demonstration only, mail queue not in use. Registration is working though but a bit slow due to mail send.
 
 Alternatively,  you could use this test dev account to login directly without register.
+
 username: test@test.dev
 password: testdev
 
