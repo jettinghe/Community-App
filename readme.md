@@ -29,5 +29,6 @@ password: testdev
 ### Feb 19 2014
 - User follow/unfollow topics->category
 - Display user followed topics in the tab
+
 ### Feb 18 2014
 - Initial release
