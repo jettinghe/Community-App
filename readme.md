@@ -24,3 +24,10 @@ password: testdev
 3. User favourite a post/comment
 4. User add own category if has enough points.
 5. Points system.
+
+# Change log
+### Feb 19 2014
+- User follow/unfollow topics->category
+- Display user followed topics in the tab
+### Feb 18 2014
+- Initial release
