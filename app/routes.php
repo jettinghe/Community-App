@@ -20,6 +20,16 @@ Route::get('topics', function(){
 	return View::make('posts.allposts')->with('posts', Post::orderBy('created_at', 'desc')->paginate(8))->with('pageTitle', 'Topics | ' . SiteTitle);;
 });
 
+Route::get('followed-topics', array('before'=>'auth', function(){
+	if ( !empty(Auth::user()->followed_categories) && Auth::user()->followed_categories !== ''){
+		$followed_categories = Category::whereIn('category_name', explode(',', Auth::user()->followed_categories))->lists('id');
+		$posts = Post::whereIn('category_id', $followed_categories)->orderBy('created_at', 'desc')->paginate(8);
+		return View::make('posts.allposts')->with('posts', $posts)->with('pageTitle', 'My Followed Topics | ' . SiteTitle);
+	}else{
+		return Redirect::back()->with('warningMessage', "You haven't followed any topics yet. Explore and follow your favourites." );
+	}
+}));
+
 Route::get('search', array('as'=>'search', 'uses'=>'PostsController@search'));
 
 Route::get('my-posts', array('as'=>'myposts', 'before'=>'auth', function(){
@@ -106,6 +116,45 @@ Route::post('post/{id}/votes/up', function($id)
 	}
 	$data = array(
 		"html" => '<a href="#" class="btn btn-xs btn-default" disabled="disabled"><span class="vote-btn votecount grey-span"><i class="fa fa-thumbs-up"></i> ' . Post::find($id)->upvotes . '</span></a>'
+	);
+	
+	return Response::json($data);
+});
+
+Route::post('user/follow/category/{category}', function($category)
+{	
+	
+	if ( Auth::check() ){
+		$current_user = Auth::user();
+		$followed_category_queue = $current_user->followed_categories;
+		$followed_category_queue .= $current_user->followed_categories == '' ? $category : ',' . $category;
+		$current_user->followed_categories = $followed_category_queue;
+		$current_user->save();
+	}
+
+	$data = array(
+		"html" => '<a href="'. URL::to('user/unfollow/category/'. $category) . '" class="unfollow-category ajax-button btn btn-xs btn-warning pull-right" data-method="post" data-replace=".unfollow-category"><span><i class="fa fa-times-circle-o"></i> UnFollow ' . $category .'</a>'
+	);
+	
+	return Response::json($data);
+});
+
+Route::post('user/unfollow/category/{category}', function($category)
+{	
+	
+	if ( Auth::check() ){
+		$current_user = Auth::user();
+		$followed_categories_array = explode(',', $current_user->followed_categories);
+		$key = array_search($category,$followed_categories_array);
+		if($key!==false){
+		    unset($followed_categories_array[$key]);
+		}
+		$current_user->followed_categories = implode(',', $followed_categories_array);
+		$current_user->save();
+	}
+
+	$data = array(
+		"html" => '<a href="'. URL::to('user/follow/category/'.$category) . '" class="follow-category ajax-button btn btn-xs btn-default pull-right" data-method="post" data-replace=".follow-category"><span><i class="fa fa-check-circle-o"></i> Follow ' .$category .'</a>'
 	);
 	
 	return Response::json($data);
