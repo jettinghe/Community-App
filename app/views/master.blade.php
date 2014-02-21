@@ -69,6 +69,7 @@
                                 <li><a href="{{ URL::to('notifications')}}"><i class="fa fa-lightbulb-o fa-fw dark-icon small-margin-right"></i>Notifications <span class="badge notification-badge">{{ $countNotifications }}</span></a></li>
                                 <li><a href="{{ URL::to('new-post') }}"><i class="fa fa-pencil fa-fw dark-icon small-margin-right"></i>New Post</a></li>
                                 <li><a href="{{ URL::to('my-posts') }}"><i class="fa fa-files-o fa-fw dark-icon small-margin-right"></i>My Posts</a></li>
+                                <li><a href="{{ URL::to('favourite-posts') }}"><i class="fa fa-files-o fa-fw dark-icon small-margin-right"></i>Favourite Posts</a></li>
                                 <li><a href="{{ URL::to('my-comments') }}"><i class="fa fa-comments-o fa-fw dark-icon small-margin-right"></i>My Comments</a></li>
                                 <li><a href="{{ URL::to('logout') }}"><i class="fa fa-sign-out fa-fw dark-icon small-margin-right"></i>Log Out</a></li>
                             </ul>

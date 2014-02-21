@@ -34,7 +34,19 @@ Route::get('search', array('as'=>'search', 'uses'=>'PostsController@search'));
 
 Route::get('my-posts', array('as'=>'myposts', 'before'=>'auth', function(){
 	return View::make('users.myposts')->with('posts', Auth::user()->posts()->orderBy('created_at', 'desc')->paginate(5))
-				->with('pageTitle', 'My Posts | ' . SiteTitle);
+				->with('pageTitle', 'My Posts | ' . SiteTitle)
+				->with('userRelatePostsTitle', 'My Own Posts');
+}));
+
+Route::get('favourite-posts', array('as'=>'favouriteposts', 'before'=>'auth', function(){
+	$favourite_posts = Post::whereIn('id', explode(',', Auth::user()->favourite_posts))->paginate(5);
+	if (count($favourite_posts) > 0){
+		return View::make('users.myposts')->with('posts', Post::whereIn('id', explode(',', Auth::user()->favourite_posts))->paginate(5))
+				->with('pageTitle', 'Favourite Posts | ' . SiteTitle)
+				->with('userRelatePostsTitle', 'Favourite Posts');
+	}else{
+		return Redirect::back()->with('warningMessage', 'You have no favourite posts yet.');
+	}
 }));
 
 Route::get('my-comments', array('as'=>'mycomments', 'before'=>'auth', function(){
@@ -155,6 +167,45 @@ Route::post('user/unfollow/category/{category}', function($category)
 
 	$data = array(
 		"html" => '<a href="'. URL::to('user/follow/category/'.$category) . '" class="follow-category ajax-button btn btn-xs btn-default pull-right" data-method="post" data-replace=".follow-category"><span><i class="fa fa-check-circle-o"></i> Follow ' .$category .'</a>'
+	);
+	
+	return Response::json($data);
+});
+
+Route::post('user/favourite/post/{id}', function($id)
+{	
+	
+	if ( Auth::check() ){
+		$current_user = Auth::user();
+		$favourite_post_queue = $current_user->favourite_posts;
+		$favourite_post_queue .= $current_user->favourite_posts == '' ? $id : ',' . $id;
+		$current_user->favourite_posts = $favourite_post_queue;
+		$current_user->save();
+	}
+
+	$data = array(
+		"html" => '<a href="'. URL::to('user/unfavourite/post/'. $id) . '" class="unfavourite-post ajax-button btn btn-xs btn-warning pull-right small-margin-right" data-method="post" data-replace=".unfavourite-post"><span><i class="fa fa-star"></i></a>'
+	);
+	
+	return Response::json($data);
+});
+
+Route::post('user/unfavourite/post/{id}', function($id)
+{	
+	
+	if ( Auth::check() ){
+		$current_user = Auth::user();
+		$favourtie_posts_array = explode(',', $current_user->favourite_posts);
+		$key = array_search($id, $favourtie_posts_array);
+		if($key!==false){
+		    unset($favourtie_posts_array[$key]);
+		}
+		$current_user->favourite_posts = implode(',', $favourtie_posts_array);
+		$current_user->save();
+	}
+
+	$data = array(
+		"html" => '<a href="'. URL::to('user/favourite/post/'.$id) . '" class="favourite-post ajax-button btn btn-xs btn-default pull-right small-margin-right" data-method="post" data-replace=".favourite-post"><span><i class="fa fa-star-o"></i></a>'
 	);
 	
 	return Response::json($data);
