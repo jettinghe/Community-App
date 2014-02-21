@@ -52,12 +52,31 @@ return array(
 			'prefix'   => '',
 		),
 
+<<<<<<< HEAD
+=======
+		// 'mysql' => array(
+		// 	'driver'    => 'mysql',
+		// 	'host'      => 'localhost',
+		// 	'database'  => 'community',
+		// 	'username'  => 'justinhe',
+		// 	'password'  => '7192732',
+		// 	'charset'   => 'utf8',
+		// 	'collation' => 'utf8_unicode_ci',
+		// 	'prefix'    => '',
+		// ),
+
+>>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
 			'database'  => 'community',
+<<<<<<< HEAD
 			'username'  => 'test',
 			'password'  => 'test',
+=======
+			'username'  => 'root',
+			'password'  => 'visa583426',
+>>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

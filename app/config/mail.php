@@ -54,8 +54,13 @@ return array(
 	|
 	*/
 
+<<<<<<< HEAD
 	'from' => array('address' => '', 'name' => 'Test Laravel Community App'),
 	'username' => '',
+=======
+	'from' => array('address' => 'testlaravelcommunity@gmail.com', 'name' => 'Test Laravel Community App'),
+	'username' => 'testlaravelcommunity@gmail.com',
+>>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 
 	/*
 	|--------------------------------------------------------------------------
@@ -81,7 +86,11 @@ return array(
 	|
 	*/
 
+<<<<<<< HEAD
 	'username' => '',
+=======
+	'username' => 'testlaravelcommunity@gmail.com',
+>>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 
 	/*
 	|--------------------------------------------------------------------------
@@ -94,7 +103,11 @@ return array(
 	|
 	*/
 
+<<<<<<< HEAD
 	'password' => '',
+=======
+	'password' => 'laravelcommunity',
+>>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 
 	/*
 	|--------------------------------------------------------------------------
