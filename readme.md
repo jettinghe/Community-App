@@ -28,9 +28,11 @@ password: testdev
 # Change log
 ###### Feb 21 2014
 - User favourite posts
+
 ###### Feb 19 2014
 - User follow/unfollow topics->category
 - Display user followed topics in the tab
+
 ###### Feb 18 2014
 - Initial release
 
