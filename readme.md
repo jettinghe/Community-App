@@ -20,8 +20,8 @@ password: testdev
 # Upcoming functions
 
 1. Post downvote, comment upvote/downvote, with notification.
-2. User follow certain categories and display in timeline.
-3. User favourite a post/comment
+2. User follow certain categories and display in timeline. √
+3. User favourite a post. √
 4. User add own category if has enough points.
 5. Points system.
 
