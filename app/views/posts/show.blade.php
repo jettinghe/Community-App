@@ -11,10 +11,7 @@
 	<span class="grey-span">&#8226;</span>
 	<a href="{{URL::to('category/'.$post->category->category_uri)}}" class="dark-link"><span class="label label-default">{{ $post->category->category_name }}</span></a>
 	
-<<<<<<< HEAD
-=======
 	{{--Post Like--}}
->>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 	@if ( Auth::check() )
 		@if ( ! in_array( Auth::user()->id, explode(',', $post->voters_id)) && Auth::user()->id !== $post->user->id )
 		<a href="{{ URL::to("post/$post->id/votes/up")}}" class="ajax-button btn btn-xs btn-default pull-right" data-method="post" data-refresh=".votecount"  data-replace=".voted-button"><span class="vote-btn votecount" data-refresh-url="{{ URL::to("post/$post->id/votes/up")}}"><i class="fa fa-thumbs-o-up"></i> {{ $post->upvotes }}</span></a>
@@ -26,10 +23,6 @@
 	@else
 	<a href="#" class="btn btn-xs btn-default pull-right" data-toggle="modal" data-target="#login-form"><i class="fa fa-thumbs-o-up"></i> {{ $post->upvotes }}</a>
 	@endif
-<<<<<<< HEAD
-
-	<a href="#comment-form" class="btn btn-xs btn-default pull-right small-margin-right"><i class="fa fa-comments-o"></i> {{ $post->comments()->count() }}</a>
-=======
 	{{--End Post Like--}}
 
 	{{--Post Comment Form Anchor--}}
@@ -49,7 +42,6 @@
 	<a href="#" class="btn btn-xs btn-default pull-right small-margin-right" data-toggle="modal" data-target="#login-form"><i class="fa fa-star-o"></i></a> 
 	@endif
 	{{--End Post Favourite--}}
->>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 
 	<hr>
 	

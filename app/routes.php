@@ -17,11 +17,7 @@ Route::get('/', array('as'=>'home', function(){
 }));
 
 Route::get('topics', function(){
-<<<<<<< HEAD
 	return View::make('posts.allposts')->with('posts', Post::orderBy('created_at', 'desc')->paginate(8))->with('pageTitle', 'Topics | ' . SiteTitle);;
-=======
-	return View::make('posts.allposts')->with('posts', Post::orderBy('created_at', 'desc')->paginate(8))->with('pageTitle', 'Topics | ' . SiteTitle);
->>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 });
 
 Route::get('followed-topics', array('before'=>'auth', function(){
@@ -38,11 +34,7 @@ Route::get('search', array('as'=>'search', 'uses'=>'PostsController@search'));
 
 Route::get('my-posts', array('as'=>'myposts', 'before'=>'auth', function(){
 	return View::make('users.myposts')->with('posts', Auth::user()->posts()->orderBy('created_at', 'desc')->paginate(5))
-<<<<<<< HEAD
 				->with('pageTitle', 'My Posts | ' . SiteTitle);;
-=======
-				->with('pageTitle', 'My Posts | ' . SiteTitle)
-				->with('userRelatePostsTitle', 'My Own Posts');
 }));
 
 Route::get('favourite-posts', array('as'=>'favouriteposts', 'before'=>'auth', function(){
@@ -54,16 +46,11 @@ Route::get('favourite-posts', array('as'=>'favouriteposts', 'before'=>'auth', fu
 	}else{
 		return Redirect::back()->with('warningMessage', 'You have no favourite posts yet.');
 	}
->>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 }));
 
 Route::get('my-comments', array('as'=>'mycomments', 'before'=>'auth', function(){
 	return View::make('users.mycomments')->with('comments', Auth::user()->comments()->orderBy('created_at', 'desc')->paginate(5))
-<<<<<<< HEAD
 				->with('pageTitle', 'My Comments | ' . SiteTitle);;
-=======
-				->with('pageTitle', 'My Comments | ' . SiteTitle);
->>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 }));
 
 Route::get('notifications/mark-all-as-read', array('before'=>'auth', 'uses'=>'UsersController@markRead'));
@@ -184,8 +171,6 @@ Route::post('user/unfollow/category/{category}', function($category)
 	return Response::json($data);
 });
 
-<<<<<<< HEAD
-=======
 Route::post('user/favourite/post/{id}', function($id)
 {	
 	
@@ -225,7 +210,6 @@ Route::post('user/unfavourite/post/{id}', function($id)
 	return Response::json($data);
 });
 
->>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 
 View::composer(array('users.newpost', 'posts.edit'), function($view)
 {

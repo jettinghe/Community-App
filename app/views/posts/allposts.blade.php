@@ -25,15 +25,7 @@
 				@endif
 				{{ HTML::link('topic/'.$parentCat->parent_category_uri, $parentCat->parent_category_name)}}</li>
 				@endforeach
-<<<<<<< HEAD
 				{{ Helper::getActiveClass('topics', '', '', false, '') }}<a href="{{ URL::to('topics') }}">All Topics</a></li>
-=======
-				{{-- End return topic links(parent category links)--}}
-				{{ Helper::getActiveClass('topics', '', '', false, '') }}<a href="{{ URL::to('topics') }}">All Topics</a></li>
-				@if ( Auth::check() )
-				{{ Helper::getActiveClass('followed-topics', '', '', false, '') }}<a href="{{ URL::to('followed-topics') }}">Followed Topics</a></li>
-				@endif
->>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 			</ul>
 		</div>
 		
@@ -95,10 +87,7 @@
 		
 		</ul>
 	</div>
-<<<<<<< HEAD
 
-=======
->>>>>>> 1765f9683be80a5130867bf5862b032032af32c9
 	{{ $posts->appends(array('q' => Input::get('q')))->links()}}
 
 {{-- End Display Posts --}}
