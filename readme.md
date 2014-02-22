@@ -19,13 +19,17 @@ password: testdev
 
 # Upcoming functions
 
-1. Post downvote, comment upvote/downvote, with notification.
+1. Post downvote, comment upvote/downvote, with notification. √
 2. User follow certain categories and display in timeline. √
 3. User favourite a post. √
 4. User add own category if has enough points.
 5. Points system.
 
 # Change log
+###### Feb 22 2014
+- Post upvote/unvote, downvote/unvote. Either upvote or downvote
+- Notifications update.
+
 ###### Feb 21 2014
 - User favourite posts
 
