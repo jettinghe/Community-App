@@ -15,8 +15,8 @@ class Postvotenotify extends Eloquent {
 
     public static function saveVoteNotify( $post, $upVoteDiff, $downVoteDiff ){
     	if( count($post->postvotenotify) > 0 && $post->postvotenotify->is_read == 0 ) {
-			$post->postvotenotify->upvoted += $upVoteDiff;
-			$post->postvotenotify->downvoted += $downVoteDiff;
+			$post->postvotenotify->upvoted = $post->postvotenotify->upvoted + $upVoteDiff < 0 ? 0 : $post->postvotenotify->upvoted + $upVoteDiff;
+			$post->postvotenotify->downvoted = $post->postvotenotify->downvoted + $downVoteDiff < 0 ? 0  : $post->postvotenotify->downvoted + $downVoteDiff;
 			$post->postvotenotify->save();
 			if ( $post->postvotenotify->upvoted == 0 && $post->postvotenotify->downvoted == 0) {
 				$post->postvotenotify->delete();
