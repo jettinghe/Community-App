@@ -75,6 +75,78 @@ class User extends Basemodel implements UserInterface, RemindableInterface {
         return $this->hasMany('Postvotenotify');
     }
 
+    public static function vote($postId, $type){
+    	$post = Post::find($postId);
+    	$beforeDownVotes = $post->downvotes;
+		$upvoters_id_queue = $post->upvoters_id;
+		$upvoters_id_array = explode(',', $upvoters_id_queue);
+		$downvoters_id_queue = $post->downvoters_id;
+		$downvoters_id_array = explode(',', $downvoters_id_queue);
+		$current_voter_id = Auth::user()->id;
+		$isUserUpVoted = in_array($current_voter_id, $upvoters_id_array);
+		$isUserDownVoted = in_array($current_voter_id, $downvoters_id_array);
+
+		if ( $type === 'up' ){
+			if ( ! $isUserUpVoted && ! $isUserDownVoted) {
+				$upvoters_id_queue .= $upvoters_id_queue == '' ? $current_voter_id : ',' . $current_voter_id;
+				$post->upvotes += 1;
+				$post->upvoters_id = $upvoters_id_queue;
+				$post->save();
+				Postvotenotify::saveVoteNotify($post, 1, 0);
+			}elseif ( $isUserUpVoted ) {
+				$key = array_search($current_voter_id, $upvoters_id_array);
+				if( $key !== false ){
+			    	unset($upvoters_id_array[$key]);
+					$post->upvotes -= 1;
+					$post->upvoters_id = implode(',', $upvoters_id_array);
+					$post->save();
+					Postvotenotify::saveVoteNotify($post, -1, 0);
+				}
+			}elseif ( $isUserDownVoted ){
+				$key = array_search($current_voter_id, $downvoters_id_array);
+				if( $key !== false ){
+			    	unset($downvoters_id_array[$key]);
+					$post->downvoters_id = implode(',', $downvoters_id_array);
+					$post->downvotes -= 1;
+					$upvoters_id_queue .= $upvoters_id_queue == '' ? $current_voter_id : ',' . $current_voter_id;
+					$post->upvotes += 1;
+					$post->upvoters_id = $upvoters_id_queue;
+					$post->save();
+					Postvotenotify::saveVoteNotify($post, 1, -1);
+				}
+			}
+		}elseif ( $type === 'down' ){
+			if ( ! $isUserUpVoted && ! $isUserDownVoted) {
+				$downvoters_id_queue .= $downvoters_id_queue == '' ? $current_voter_id : ',' . $current_voter_id;
+				$post->downvotes += 1;
+				$post->downvoters_id = $downvoters_id_queue;
+				$post->save();
+				Postvotenotify::saveVoteNotify($post, 0, 1);
+			}elseif ( $isUserDownVoted ) {
+				$key = array_search($current_voter_id, $downvoters_id_array);
+				if( $key !== false ){
+			    	unset($downvoters_id_array[$key]);
+					$post->downvotes -= 1;
+					$post->downvoters_id = implode(',', $downvoters_id_array);
+					$post->save();
+					Postvotenotify::saveVoteNotify($post, 0, -1);
+				}
+			}elseif ( $isUserUpVoted ){
+				$key = array_search($current_voter_id, $upvoters_id_array);
+				if( $key !== false ){
+			    	unset($upvoters_id_array[$key]);
+			    	$post->upvoters_id = implode(',', $upvoters_id_array);
+					$post->upvotes -= 1;
+					$downvoters_id_queue .= $downvoters_id_queue == '' ? $current_voter_id : ',' . $current_voter_id;
+					$post->downvotes += 1;
+					$post->downvoters_id = $downvoters_id_queue;
+					$post->save();
+					Postvotenotify::saveVoteNotify($post, -1, 1);
+				}
+			}
+		}
+    }
+
 	public static function loginFormHtml(){
 		return '<div class="modal fade" id="login-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'.
 		'<div class="modal-dialog">

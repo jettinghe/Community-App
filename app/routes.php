@@ -90,7 +90,17 @@ Route::get('post/{id}/votes/up', function($id)
 {	
 	
 	$data = array(
-		"html" => '<span class="vote-btn votecount grey-span"><i class="fa fa-thumbs-up"></i> ' . Post::find($id)->upvotes . '</span>'
+		"html" => '<span class="vote-btn upvotecount orange-span" data-refresh-url="'. URL::to("post/$id/remove/votes/up") . '"><i class="fa fa-fw fa-thumbs-up"></i>' . Post::find($id)->upvotes . '</span>'
+	);
+	
+	return Response::json($data);
+});
+
+Route::get('post/{id}/remove/votes/up', function($id)
+{	
+	
+	$data = array(
+		"html" => '<span class="vote-btn upvotecount" data-refresh-url="'. URL::to("post/$id/votes/up") . '"><i class="fa fa-fw fa-thumbs-o-up"></i>' . Post::find($id)->upvotes . '</span>'
 	);
 	
 	return Response::json($data);
@@ -99,34 +109,42 @@ Route::get('post/{id}/votes/up', function($id)
 Route::post('post/{id}/votes/up', function($id)
 {	
 	if( Auth::check() ){
-		$post = Post::find($id);
-		$voters_id_queue = $post->voters_id;
-		$voters_id_array = explode(',', $voters_id_queue);
-		$current_voter_id = Auth::user()->id;
-		if( ! in_array($current_voter_id, $voters_id_array)){
-			$voters_id_queue .= $voters_id_queue == '' ? $current_voter_id : ',' . $current_voter_id;
-			$post->upvotes += 1; 
-			$post->voters_id = $voters_id_queue;
-			$post->save();
-
-			if( count($post->postvotenotify) > 0 && $post->postvotenotify->is_read == 0 ) {
-				$post->postvotenotify->upvoted += 1;
-				$post->postvotenotify->save();
-			}else{
-				if( count($post->postvotenotify) > 0 && $post->postvotenotify->is_read == 1 ) {
-					$post->postvotenotify->delete();
-				}
-				$postvotenotify = new Postvotenotify;
-				$postvotenotify->user_id = $post->user->id;
-				$postvotenotify->post_id = $id;
-				$postvotenotify->is_read = 0;
-				$postvotenotify->upvoted += 1;
-				$postvotenotify->save();
-			}
-		}
+		Auth::user()->vote($id, 'up');
 	}
 	$data = array(
-		"html" => '<a href="#" class="btn btn-xs btn-default" disabled="disabled"><span class="vote-btn votecount grey-span"><i class="fa fa-thumbs-up"></i> ' . Post::find($id)->upvotes . '</span></a>'
+		"html" => '<a href="'. URL::to("post/$id/votes/down") .'" class="downvote-button ajax-button btn btn-xs btn-default pull-right" data-method="post" data-refresh=".downvotecount"  data-replace=".upvote-button"><span class="vote-btn downvotecount" data-refresh-url="'. URL::to("post/$id/votes/down") . '"><i class="fa fa-fw fa-thumbs-o-down"></i>' . Post::find($id)->downvotes . '</span></a>'
+	);
+	
+	return Response::json($data);
+});
+
+Route::get('post/{id}/votes/down', function($id)
+{	
+	
+	$data = array(
+		"html" => '<span class="vote-btn downvotecount orange-span" data-refresh-url="'. URL::to("post/$id/remove/votes/down") . '"><i class="fa fa-fw fa-thumbs-down"></i>' . Post::find($id)->downvotes . '</span>'
+	);
+	
+	return Response::json($data);
+});
+
+Route::get('post/{id}/remove/votes/down', function($id)
+{	
+	
+	$data = array(
+		"html" => '<span class="vote-btn downvotecount" data-refresh-url="'. URL::to("post/$id/votes/down") . '"><i class="fa fa-fw fa-thumbs-o-down"></i>' . Post::find($id)->downvotes . '</span>'
+	);
+	
+	return Response::json($data);
+});
+
+Route::post('post/{id}/votes/down', function($id)
+{	
+	if( Auth::check() ){
+		Auth::user()->vote($id, 'down');
+	}
+	$data = array(
+		"html" => '<a href="'. URL::to("post/$id/votes/up") .'" class="upvote-button ajax-button btn btn-xs btn-default pull-right small-margin-right" data-method="post" data-refresh=".upvotecount"  data-replace=".downvote-button"><span class="vote-btn upvotecount" data-refresh-url="'. URL::to("post/$id/votes/up") . '"><i class="fa fa-fw fa-thumbs-o-up"></i>' . Post::find($id)->upvotes . '</span></a>'
 	);
 	
 	return Response::json($data);

@@ -93,11 +93,7 @@ $(document).ready(function() {
 	});
 
 	$('.selectpicker').selectpicker();
-
-	$('.vote-btn').parent().on('click', function(){
-		$(this).attr('disabled', 'disabled');
-	});
-
+	
 	$('li.dropdown .dropdown-animation').on('click', function(){
 		$(this).find('i').toggleClass('fa-angle-down').toggleClass('fa-angle-up');
 	});

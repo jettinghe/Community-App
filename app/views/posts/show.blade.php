@@ -11,25 +11,33 @@
 	<span class="grey-span">&#8226;</span>
 	<a href="{{URL::to('category/'.$post->category->category_uri)}}" class="dark-link"><span class="label label-default">{{ $post->category->category_name }}</span></a>
 	
-	{{--Post Like--}}
 	@if ( Auth::check() )
-		@if ( ! in_array( Auth::user()->id, explode(',', $post->voters_id)) && Auth::user()->id !== $post->user->id )
-		<a href="{{ URL::to("post/$post->id/votes/up")}}" class="ajax-button btn btn-xs btn-default pull-right" data-method="post" data-refresh=".votecount"  data-replace=".voted-button"><span class="vote-btn votecount" data-refresh-url="{{ URL::to("post/$post->id/votes/up")}}"><i class="fa fa-thumbs-o-up"></i> {{ $post->upvotes }}</span></a>
+		{{--Post Vote Down--}}
+		@if ( ! in_array( Auth::user()->id, explode(',', $post->downvoters_id)) && Auth::user()->id !== $post->user->id )
+		<a href="{{ URL::to("post/$post->id/votes/down")}}" class="downvote-button ajax-button btn btn-xs btn-default pull-right" data-method="post" data-refresh=".downvotecount"  data-replace=".upvote-button"><span class="vote-btn downvotecount" data-refresh-url="{{ URL::to("post/$post->id/votes/down")}}"><i class="fa fa-fw fa-thumbs-o-down"></i>{{ $post->downvotes }}</span></a>
 		@elseif(Auth::user()->id == $post->user->id)
-		<a href="#" class="btn btn-xs btn-default popover-button pull-right" data-content="You cannot vote on your own post" data-placement="top"><i class="fa fa-thumbs-o-up"></i> {{ $post->upvotes }}</a>
+		<a href="#" class="btn btn-xs btn-default popover-button pull-right" data-content="You cannot vote on your own post" data-placement="top"><i class="fa fa-fw fa-thumbs-o-down"></i>{{ $post->downvotes }}</a>
 		@else
-		<a href="#" class="btn btn-xs btn-default pull-right" disabled="disabled"><span class="grey-span"><i class="fa fa-thumbs-o-up"></i> {{ $post->upvotes }}</span></a>
+		<a href="{{ URL::to("post/$post->id/votes/down")}}" class="downvote-button ajax-button btn btn-xs btn-default pull-right" data-method="post" data-refresh=".downvotecount"  data-replace=".upvote-button"><span class="vote-btn downvotecount orange-span" data-refresh-url="{{ URL::to("post/$post->id/remove/votes/down")}}"><i class="fa fa-fw fa-thumbs-down"></i>{{ $post->downvotes }}</span></a>
 		@endif
+		{{--End Post Vote Down--}}
+		{{--Post Vote Up--}}
+		@if ( ! in_array( Auth::user()->id, explode(',', $post->upvoters_id)) && Auth::user()->id !== $post->user->id )
+		<a href="{{ URL::to("post/$post->id/votes/up")}}" class="upvote-button ajax-button btn btn-xs btn-default pull-right small-margin-right" data-method="post" data-refresh=".upvotecount"  data-replace=".downvote-button"><span class="vote-btn upvotecount" data-refresh-url="{{ URL::to("post/$post->id/votes/up")}}"><i class="fa fa-fw fa-thumbs-o-up"></i>{{ $post->upvotes }}</span></a>
+		@elseif(Auth::user()->id == $post->user->id)
+		<a href="#" class="btn btn-xs btn-default popover-button pull-right small-margin-right" data-content="You cannot vote on your own post" data-placement="top"><i class="fa fa-fw fa-thumbs-o-up"></i>{{ $post->upvotes }}</a>
+		@else
+		<a href="{{ URL::to("post/$post->id/votes/up")}}" class="upvote-button ajax-button btn btn-xs btn-default pull-right small-margin-right" data-method="post" data-refresh=".upvotecount"  data-replace=".downvote-button"><span class="vote-btn upvotecount orange-span" data-refresh-url="{{ URL::to("post/$post->id/remove/votes/up")}}"><i class="fa fa-fw fa-thumbs-up"></i>{{ $post->upvotes }}</span></a>
+		@endif
+		{{--End Post Vote Up--}}
 	@else
-	<a href="#" class="btn btn-xs btn-default pull-right" data-toggle="modal" data-target="#login-form"><i class="fa fa-thumbs-o-up"></i> {{ $post->upvotes }}</a>
+	<a href="#" class="btn btn-xs btn-default pull-right" data-toggle="modal" data-target="#login-form"><i class="fa fa-fw fa-thumbs-o-down"></i>{{ $post->downvotes }}</a>
+	<a href="#" class="btn btn-xs btn-default pull-right small-margin-right" data-toggle="modal" data-target="#login-form"><i class="fa fa-fw fa-thumbs-o-up"></i>{{ $post->upvotes }}</a>
 	@endif
-	{{--End Post Like--}}
 
 	{{--Post Comment Form Anchor--}}
 	<a href="#comment-form" class="btn btn-xs btn-default pull-right small-margin-right"><i class="fa fa-comments-o"></i> {{ $post->comments()->count() }}</a>
 	{{--End Post Comment Form Anchor--}}
-
-
 
 	{{--Post Favourite--}}
 	@if ( Auth::check() )

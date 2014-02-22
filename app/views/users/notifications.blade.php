@@ -10,7 +10,7 @@
 			<ul class="list-group">
 			@foreach( $postvotenotifications as $postvotenotification )
 				<a href="{{ Post::seolink($postvotenotification->post_id) }}" class="list-group-item">
-				    <blockquote><span class="badge"> + {{ $postvotenotification->upvoted }} </span> {{ Post::find($postvotenotification->post_id)->title }}</blockquote>
+				    <blockquote><span class="badge"> + {{ $postvotenotification->upvoted }} </span> <span class="badge"> - {{ $postvotenotification->downvoted }} </span> {{ Post::find($postvotenotification->post_id)->title }}</blockquote>
 				</a>
 			@endforeach
 			</ul>
