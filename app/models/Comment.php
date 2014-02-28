@@ -4,7 +4,7 @@ class Comment extends Basemodel {
 	protected $guarded = array();
 
 	public static $rules = array(
-        'content'=>'required|max:500',
+        'content'=>'required|between:10, 500',
     );
 
     public function user(){

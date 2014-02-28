@@ -2,7 +2,7 @@
 
 @section('content')
 	<h2>Login</h2>
-	{{ Form::open(array('url' => 'login', 'method' => 'post', 'role' => 'form')) }}
+	{{ Form::open(array('url' => 'user/login', 'method' => 'post', 'role' => 'form')) }}
 	<fieldset>
 	{{ Form::token() }}
 	<div class="form-group">
@@ -14,6 +14,6 @@
 		{{ Form::password('password', array('required', 'class' => 'form-control')) }}
 	</div>
 	{{ Form::submit('Login', array('class' => 'btn btn-default')) }}
-	<p>{{ HTML::link('forgot-password', 'Forgot Your Password?')}}</p>
+	<p>{{ HTML::link('password/remind', 'Forgot Your Password?')}}</p>
 	{{ Form::close() }}
 @stop

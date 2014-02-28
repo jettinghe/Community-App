@@ -11,7 +11,7 @@
 	</div>
 @endif
 
-	{{ Form::open(array('id' => 'new-post', 'url' => 'new-post', 'method' => 'post', 'role' => 'form')) }}
+	{{ Form::open(array('id' => 'new-post', 'url' => 'user/new-post', 'method' => 'post', 'role' => 'form')) }}
 	<fieldset>
 		{{ Form::token() }}
 		<input type="hidden" name ="postid" id="postid" value="{{$uniqid}}"/>

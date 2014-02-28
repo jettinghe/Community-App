@@ -14,11 +14,11 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-		  {{ HTML::style('/css/style.css') }}
+          {{ HTML::style('/css/style.css') }}
       {{ HTML::style('/css/font-awesome-4.0.3/css/font-awesome.min.css') }}
   
-  		{{ HTML::script('/js/jquery-1.10.2.min.js') }}
-  		{{ HTML::script('/js/modernizr-2.6.2.min.js') }}
+        {{ HTML::script('/js/jquery-1.10.2.min.js') }}
+        {{ HTML::script('/js/modernizr-2.6.2.min.js') }}
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -59,7 +59,7 @@
                     
                     <ul class="nav navbar-nav navbar-right">
                         @if( ! Auth::check())
-                          <li>{{ HTML::link('register', 'Register') }}</li>
+                          <li>{{ HTML::link('user/register', 'Register') }}</li>
                           <li>{{ link_to("#", 'Login', array('data-toggle' => 'modal', 'data-target' => '#login-form')) }}</li>
                         @else
                         <li class="dropdown">
@@ -67,11 +67,11 @@
                             <a href="#" class="dropdown-toggle dropdown-animation" data-toggle="dropdown"><i class="fa fa-smile-o fa-fw dark-icon"></i>Hi, {{ Auth::user()->username }} <span class="badge notification-badge">{{ $countNotifications }}</span> <i class="fa fa-angle-down"></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="{{ URL::to('notifications')}}"><i class="fa fa-lightbulb-o fa-fw dark-icon small-margin-right"></i>Notifications <span class="badge notification-badge">{{ $countNotifications }}</span></a></li>
-                                <li><a href="{{ URL::to('new-post') }}"><i class="fa fa-pencil fa-fw dark-icon small-margin-right"></i>New Post</a></li>
-                                <li><a href="{{ URL::to('my-posts') }}"><i class="fa fa-files-o fa-fw dark-icon small-margin-right"></i>My Posts</a></li>
-                                <li><a href="{{ URL::to('favourite-posts') }}"><i class="fa fa-files-o fa-fw dark-icon small-margin-right"></i>Favourite Posts</a></li>
-                                <li><a href="{{ URL::to('my-comments') }}"><i class="fa fa-comments-o fa-fw dark-icon small-margin-right"></i>My Comments</a></li>
-                                <li><a href="{{ URL::to('logout') }}"><i class="fa fa-sign-out fa-fw dark-icon small-margin-right"></i>Log Out</a></li>
+                                <li><a href="{{ URL::to('user/new-post') }}"><i class="fa fa-pencil fa-fw dark-icon small-margin-right"></i>New Post</a></li>
+                                <li><a href="{{ URL::to('user/my-posts') }}"><i class="fa fa-files-o fa-fw dark-icon small-margin-right"></i>My Posts</a></li>
+                                <li><a href="{{ URL::to('user/favourite-posts') }}"><i class="fa fa-files-o fa-fw dark-icon small-margin-right"></i>Favourite Posts</a></li>
+                                <li><a href="{{ URL::to('user/my-comments') }}"><i class="fa fa-comments-o fa-fw dark-icon small-margin-right"></i>My Comments</a></li>
+                                <li><a href="{{ URL::to('user/logout') }}"><i class="fa fa-sign-out fa-fw dark-icon small-margin-right"></i>Log Out</a></li>
                             </ul>
                         </li>
                         @endif
@@ -110,12 +110,14 @@
         {{ HTML::script('/js/main.js') }}
 
         <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='//www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X');ga('send','pageview');
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-48208708-1', 'nymble.io');
+          ga('send', 'pageview');
+
         </script>
     </body>
 </html>

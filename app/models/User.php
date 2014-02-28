@@ -156,7 +156,7 @@ class User extends Basemodel implements UserInterface, RemindableInterface {
 		        <h4 class="modal-title" id="myModalLabel">Login</h4>
 		      </div>
 		      <div class="modal-body">'.
-				Form::open(array('url' => 'login', 'method' => 'post', 'role' => 'form')).
+				Form::open(array('url' => 'user/login', 'method' => 'post', 'role' => 'form')).
 				'<fieldset>'.
 				Form::token().
 				'<div class="form-group">' . 

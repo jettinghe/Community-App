@@ -15,7 +15,7 @@
 	<h2>Register</h2>
 	<hr>
 
-	{{ Form::open(array('url' => 'register', 'method' => 'post', 'role' => 'form')) }}
+	{{ Form::open(array('url' => 'user/register', 'method' => 'post', 'role' => 'form')) }}
 		<fieldset>
 		{{ Form::token() }}
 
