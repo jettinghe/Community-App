@@ -26,7 +26,7 @@ class UsersController extends BaseController {
         if($user){
             $isActive = User::where('email', '=', $email)->first()->active;
             if($isActive === '0'){
-                return Redirect::route('login')
+                return Redirect::action('UsersController@getLogin')
                     ->with('warningMessage', "Your Account $email has not been activated yet.")
                     ->withInput();
             }
@@ -40,12 +40,12 @@ class UsersController extends BaseController {
             if (Auth::attempt($user)) {
                 return Redirect::back()->with('successMessage', 'Welcome back, '. Auth::user()->username . '. ')->with('countNotifications', Auth::user()->commentnotifies()->where('is_read', '=', 0)->count() + Auth::user()->postvotenotifies()->where('is_read', '=', 0)->count());
             } else {
-                return Redirect::route('login')
+                return Redirect::action('UsersController@getLogin')
                     ->with('warningMessage', 'Your username/password combination was incorrect.')
                     ->withInput();
             }
         }else{
-            return Redirect::route('login')
+            return Redirect::action('UsersController@getLogin')
                     ->with('warningMessage', 'We could not find your email.')
                     ->withInput();
         }
