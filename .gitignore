@@ -1,8 +1,8 @@
 /bootstrap/compiled.php
 /vendor
 
-app/config/database.php
-app/config/mail.php
+/app/config/database.php
+/app/config/mail.php
 
 /public/node_modules
 
