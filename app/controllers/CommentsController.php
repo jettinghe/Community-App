@@ -30,8 +30,9 @@ class CommentsController extends BaseController {
 	public function store()
 	{
 		$validation = Comment::validate(Input::all());
+		$isEmpty = trim(strip_tags(Input::get('content'))) == '';
 
-        if ($validation->passes()) {
+        if ($validation->passes() && ! $isEmpty) {
             
             $comment = new Comment;
             $comment_content = Input::get('content');
@@ -93,7 +94,8 @@ class CommentsController extends BaseController {
             return Redirect::back()->with('successMessage', 'Comment Added, Go To <a href="#comment-'.$current_comment_id.'" class="alert-link"><u>Your Comment</u></a>')->with('commentMade', $comment_content);
         
         } else {
-        	return Redirect::back()->withErrors($validation)->withInput();
+        	return $isEmpty ? Redirect::back()->withErrors($validation)->with('warningMessage', 'Comment is empty.')->withInput()
+        					 : Redirect::back()->withErrors($validation)->withInput();
         }
 	}
 
