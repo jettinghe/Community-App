@@ -1,10 +1,12 @@
 /bootstrap/compiled.php
 /vendor
 
+app/config/database.php
+app/config/mail.php
+
 /public/node_modules
 
 composer.phar
 composer.lock
 
 .DS_Store
-.idea/

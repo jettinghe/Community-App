@@ -57,6 +57,40 @@ class PostsController extends BaseController {
     }
 
     /**
+     * Display posts under category
+     * @param  string $category category name of a category
+     * @return objects      posts under category
+     */
+    public function postsByCategory($category){
+		$matched_category = Category::where('category_uri', '=', $category)->first();
+		if( count($matched_category) > 0 ){
+			$posts = $matched_category->posts()->paginate(8);
+			return View::make('posts.allposts')
+	        		->with('posts', $posts)->with('category', $matched_category)
+	        		->with('pageTitle', $matched_category->category_name. ' | ' . SiteTitle);
+	    }else{
+	    	return Redirect::route('home')->with('warningMessage', "Could not find category: $category" );
+	    }
+	}
+
+	/**
+     * Display posts under category
+     * @param  string $category category name of a category
+     * @return objects      posts under category
+     */
+    public function postsByTopic($parentcategory){
+		$matched_parent_category = Parentcategory::where('parent_category_uri', '=', $parentcategory)->first();
+		if( count($matched_parent_category) > 0 ){
+			$posts = $matched_parent_category->posts()->paginate(8);
+			return View::make('posts.allposts')
+	        		->with('posts', $posts)->with('parentcategory', $matched_parent_category)
+	        		->with('pageTitle', $matched_parent_category->parent_category_name. ' | ' . SiteTitle);
+	    }else{
+	    	return Redirect::route('home')->with('warningMessage', "Cound not find topic: $parentcategory" );
+	    }
+	}
+
+    /**
      * Search posts with keywords
      * @param  String $keywords 
      * @return Post objects array
