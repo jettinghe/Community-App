@@ -1,362 +1,79 @@
 <?php
-use Carbon\Carbon;
 define("SiteTitle", "Laravel Community");
+
 /*
 |--------------------------------------------------------------------------
-| Application Routes
+| The root content and topics content route.
 |--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the Closure to execute when that URI is requested.
+| In default, return all posts at index level and in topics.
 |
 */
-
 Route::get('/', array('as'=>'home', function(){
 	return View::make('posts.allposts')->with('posts', Post::orderBy('created_at', 'desc')->paginate(8))->with('pageTitle', SiteTitle);
 }));
 
 Route::get('topics', function(){
-	return View::make('posts.allposts')->with('posts', Post::orderBy('created_at', 'desc')->paginate(8))->with('pageTitle', 'Topics | ' . SiteTitle);;
+	return View::make('posts.allposts')->with('posts', Post::orderBy('created_at', 'desc')->paginate(8))->with('pageTitle', 'Topics | ' . SiteTitle);
 });
 
-Route::get('followed-topics', array('before'=>'auth', function(){
-	if ( !empty(Auth::user()->followed_categories) && Auth::user()->followed_categories !== ''){
-		$followed_categories = Category::whereIn('category_name', explode(',', Auth::user()->followed_categories))->lists('id');
-		$posts = Post::whereIn('category_id', $followed_categories)->orderBy('created_at', 'desc')->paginate(8);
-		return View::make('posts.allposts')->with('posts', $posts)->with('pageTitle', 'My Followed Topics | ' . SiteTitle);
-	}else{
-		return Redirect::back()->with('warningMessage', "You haven't followed any topics yet. Explore and follow your favourites." );
-	}
-}));
 
+/*
+|--------------------------------------------------------------------------
+| All controller level routes are listed below
+|--------------------------------------------------------------------------
+*/
+
+//Controller route for all user actions
+Route::controller('user', 'UsersController');
+//Controller route for all post vote actions
+Route::controller('post-vote', 'VoteController');
+//Controller route for all password remind/reset actions
+Route::controller('password', 'RemindersController');
+
+
+/*
+|--------------------------------------------------------------------------
+| All posts related routes are listed below.
+|--------------------------------------------------------------------------
+| Including search, single post show/edit, posts by tags/categories/topics.
+|
+*/
+
+//Display search form
 Route::get('search', array('as'=>'search', 'uses'=>'PostsController@search'));
-
-Route::get('my-posts', array('as'=>'myposts', 'before'=>'auth', function(){
-	return View::make('users.myposts')->with('posts', Auth::user()->posts()->orderBy('created_at', 'desc')->paginate(5))
-				->with('pageTitle', 'My Posts | ' . SiteTitle);;
-}));
-
-Route::get('favourite-posts', array('as'=>'favouriteposts', 'before'=>'auth', function(){
-	$favourite_posts = Post::whereIn('id', explode(',', Auth::user()->favourite_posts))->paginate(5);
-	if (count($favourite_posts) > 0){
-		return View::make('users.myposts')->with('posts', Post::whereIn('id', explode(',', Auth::user()->favourite_posts))->paginate(5))
-				->with('pageTitle', 'Favourite Posts | ' . SiteTitle)
-				->with('userRelatePostsTitle', 'Favourite Posts');
-	}else{
-		return Redirect::back()->with('warningMessage', 'You have no favourite posts yet.');
-	}
-}));
-
-Route::get('my-comments', array('as'=>'mycomments', 'before'=>'auth', function(){
-	return View::make('users.mycomments')->with('comments', Auth::user()->comments()->orderBy('created_at', 'desc')->paginate(5))
-				->with('pageTitle', 'My Comments | ' . SiteTitle);;
-}));
-
-Route::get('notifications/mark-all-as-read', array('before'=>'auth', 'uses'=>'UsersController@markRead'));
-Route::get('notifications/votes-read', array('before'=>'auth', 'uses'=>'UsersController@votesRead'));
-
-Route::get('post/{id}/{postTitle}', 'PostsController@show');
-Route::post('post/{id}/{postTitle}', 'CommentsController@store');
-Route::post('notifications', 'CommentsController@store');
-
+//Display posts by tag
 Route::get('tag/{tag}', 'PostsController@postsByTag');
-
-Route::get('category/{category}', function($category){
-	$matched_category = Category::where('category_uri', '=', $category)->first();
-	if( count($matched_category) > 0 ){
-		$posts = $matched_category->posts()->paginate(8);
-		return View::make('posts.allposts')
-        		->with('posts', $posts)->with('category', $matched_category)
-        		->with('pageTitle', $matched_category->category_name. ' | ' . SiteTitle);
-    }else{
-    	return Redirect::route('home')->with('warningMessage', "Could not find category: $category" );
-    }
-});
-
-Route::get('topic/{parentcategory}', function($parentcategory){
-	$matched_parent_category = Parentcategory::where('parent_category_uri', '=', $parentcategory)->first();
-	if( count($matched_parent_category) > 0 ){
-		$posts = $matched_parent_category->posts()->paginate(8);
-		return View::make('posts.allposts')
-        		->with('posts', $posts)->with('parentcategory', $matched_parent_category)
-        		->with('pageTitle', $matched_parent_category->parent_category_name. ' | ' . SiteTitle);
-    }else{
-    	return Redirect::route('home')->with('warningMessage', "Cound not find topic: $parentcategory" );
-    }
-});
-
-Route::get('post/{id}/votes/up', function($id)
-{	
-	
-	$data = array(
-		"html" => '<span class="vote-btn upvotecount orange-span" data-refresh-url="'. URL::to("post/$id/remove/votes/up") . '"><i class="fa fa-fw fa-thumbs-up"></i>' . Post::find($id)->upvotes . '</span>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::get('post/{id}/remove/votes/up', function($id)
-{	
-	
-	$data = array(
-		"html" => '<span class="vote-btn upvotecount" data-refresh-url="'. URL::to("post/$id/votes/up") . '"><i class="fa fa-fw fa-thumbs-o-up"></i>' . Post::find($id)->upvotes . '</span>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::post('post/{id}/votes/up', function($id)
-{	
-	if( Auth::check() ){
-		Auth::user()->vote($id, 'up');
-	}
-	$data = array(
-		"html" => '<a href="'. URL::to("post/$id/votes/down") .'" class="downvote-button ajax-button btn btn-xs btn-default pull-right" data-method="post" data-refresh=".downvotecount"  data-replace=".upvote-button"><span class="vote-btn downvotecount" data-refresh-url="'. URL::to("post/$id/votes/down") . '"><i class="fa fa-fw fa-thumbs-o-down"></i>' . Post::find($id)->downvotes . '</span></a>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::get('post/{id}/votes/down', function($id)
-{	
-	
-	$data = array(
-		"html" => '<span class="vote-btn downvotecount orange-span" data-refresh-url="'. URL::to("post/$id/remove/votes/down") . '"><i class="fa fa-fw fa-thumbs-down"></i>' . Post::find($id)->downvotes . '</span>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::get('post/{id}/remove/votes/down', function($id)
-{	
-	
-	$data = array(
-		"html" => '<span class="vote-btn downvotecount" data-refresh-url="'. URL::to("post/$id/votes/down") . '"><i class="fa fa-fw fa-thumbs-o-down"></i>' . Post::find($id)->downvotes . '</span>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::post('post/{id}/votes/down', function($id)
-{	
-	if( Auth::check() ){
-		Auth::user()->vote($id, 'down');
-	}
-	$data = array(
-		"html" => '<a href="'. URL::to("post/$id/votes/up") .'" class="upvote-button ajax-button btn btn-xs btn-default pull-right small-margin-right" data-method="post" data-refresh=".upvotecount"  data-replace=".downvote-button"><span class="vote-btn upvotecount" data-refresh-url="'. URL::to("post/$id/votes/up") . '"><i class="fa fa-fw fa-thumbs-o-up"></i>' . Post::find($id)->upvotes . '</span></a>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::post('user/follow/category/{category}', function($category)
-{	
-	
-	if ( Auth::check() ){
-		$current_user = Auth::user();
-		$followed_category_queue = $current_user->followed_categories;
-		$followed_category_queue .= $current_user->followed_categories == '' ? $category : ',' . $category;
-		$current_user->followed_categories = $followed_category_queue;
-		$current_user->save();
-	}
-
-	$data = array(
-		"html" => '<a href="'. URL::to('user/unfollow/category/'. $category) . '" class="unfollow-category ajax-button btn btn-xs btn-warning pull-right" data-method="post" data-replace=".unfollow-category"><span><i class="fa fa-times-circle-o"></i> UnFollow ' . $category .'</a>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::post('user/unfollow/category/{category}', function($category)
-{	
-	
-	if ( Auth::check() ){
-		$current_user = Auth::user();
-		$followed_categories_array = explode(',', $current_user->followed_categories);
-		$key = array_search($category,$followed_categories_array);
-		if($key!==false){
-		    unset($followed_categories_array[$key]);
-		}
-		$current_user->followed_categories = implode(',', $followed_categories_array);
-		$current_user->save();
-	}
-
-	$data = array(
-		"html" => '<a href="'. URL::to('user/follow/category/'.$category) . '" class="follow-category ajax-button btn btn-xs btn-default pull-right" data-method="post" data-replace=".follow-category"><span><i class="fa fa-check-circle-o"></i> Follow ' .$category .'</a>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::post('user/favourite/post/{id}', function($id)
-{	
-	
-	if ( Auth::check() ){
-		$current_user = Auth::user();
-		$favourite_post_queue = $current_user->favourite_posts;
-		$favourite_post_queue .= $current_user->favourite_posts == '' ? $id : ',' . $id;
-		$current_user->favourite_posts = $favourite_post_queue;
-		$current_user->save();
-	}
-
-	$data = array(
-		"html" => '<a href="'. URL::to('user/unfavourite/post/'. $id) . '" class="unfavourite-post ajax-button btn btn-xs btn-warning pull-right small-margin-right" data-method="post" data-replace=".unfavourite-post"><span><i class="fa fa-star"></i></a>'
-	);
-	
-	return Response::json($data);
-});
-
-Route::post('user/unfavourite/post/{id}', function($id)
-{	
-	
-	if ( Auth::check() ){
-		$current_user = Auth::user();
-		$favourtie_posts_array = explode(',', $current_user->favourite_posts);
-		$key = array_search($id, $favourtie_posts_array);
-		if($key!==false){
-		    unset($favourtie_posts_array[$key]);
-		}
-		$current_user->favourite_posts = implode(',', $favourtie_posts_array);
-		$current_user->save();
-	}
-
-	$data = array(
-		"html" => '<a href="'. URL::to('user/favourite/post/'.$id) . '" class="favourite-post ajax-button btn btn-xs btn-default pull-right small-margin-right" data-method="post" data-replace=".favourite-post"><span><i class="fa fa-star-o"></i></a>'
-	);
-	
-	return Response::json($data);
-});
-
-
-View::composer(array('users.newpost', 'posts.edit'), function($view)
-{
-	$catmodel = Category::get(array('id','category_name'));
-	
-	$catsHTML = '<select id="categoryid" name="categoryid" class="form-control selectpicker" data-live-search="true">';
-	
-	foreach ($catmodel as $key => $value)
-	{
-    	// Create the options array
-    	$catoptions[$value->id] = $value->category_name;
-	}
-
-	foreach( Parentcategory::all() as $parentcategory){
-		$catsHTML .= '<optgroup label="' . $parentcategory->parent_category_name . '">';
-		foreach ($parentcategory->categories as $subcategory) {
-			$catsHTML .= '<option value="' . $subcategory->id . '">' . $subcategory->category_name . '</option>';
-		}
-		$catsHTML .= '</optgroup>';
-	}
-
-	$catsHTML .= '</select>';
-	
-	$view->with('catsHTML', $catsHTML)->with('catoptions', $catoptions);
-});
-
-View::composer('users.newpost', function($view){
-    $view->with('uniqid', Post::genId());
-});
-
-View::composer('home', function($view){
-	$parentCats = Parentcategory::all();
-	$hotCats = Category::all();
-	$hotPostsToday= Post::hotPosts(1);
-	$hotPostsWeek = Post::hotPosts(7);
-	$hotPostsMonth = Post::hotPosts(31);
-
-    $view->with('hotCats', $hotCats)
-    	 ->with('hotPostsToday', $hotPostsToday)
-    	 ->with('hotPostsWeek', $hotPostsWeek)
-    	 ->with('hotPostsMonth', $hotPostsMonth)
-    	 ->with('parentCats', $parentCats);
-});
-
-View::composer('posts.allposts', function($view){
-	$parentCats = Parentcategory::all();
-    $view->with('parentCats', $parentCats);
-});
-
-Route::get('activate', array('as'=>'activate', 'uses'=>'UsersController@activate'));
-
-Route::get('forgot-password', function()
-{
-    return View::make('password.pwremind')->with('pageTitle', 'Forgot Password | ' . SiteTitle);
-});
-
-Route::post('forgot-password', 'RemindersController@postRemind');
-
-Route::get('register', array('as'=>'register', function()
-{
-     return View::make('users.create')
-            ->with('pageTitle', 'Register | ' . SiteTitle);
-}));
-
-Route::get('password/reset/{token}', 'RemindersController@getReset');
-
-Route::post('password/reset/{token}', 'RemindersController@postReset');
-
-Route::get('logout', array('as'=>'logout', 'uses'=>'UsersController@logout'));
-
-Route::get('login', array('as'=>'login', function()
-{	
-	if ( !Auth::check() ){
-    	return View::make('users.login')
-			->with('pageTitle', 'Login | ' . SiteTitle);
-	}else{
-		return Redirect::route('home');
-	}
-}));
-
-Route::get('new-post', array('as'=>'new-post', 'before' => 'auth', function()
-{
-    return View::make('users.newpost')
-            ->with('pageTitle', 'New Post | ' . SiteTitle);
-}));
-
+//Dislay posts by category
+Route::get('category/{category}', 'PostsController@postsByCategory');
+//Display posts by topic
+Route::get('topic/{parentcategory}', 'PostsController@postsByTopic');
+//Display single post
+Route::get('post/{id}/{postTitle}', 'PostsController@show');
+//Post comment on a single post
+Route::post('post/{id}/{postTitle}', 'CommentsController@store');
+//Edit single post view
 Route::get('edit/post/{id}', array('as'=>'edit', 'before'=>'auth', 'uses'=>'PostsController@edit'));
+//Update single post
 Route::put('edit/post/{id}', array('before' => 'csrf', 'uses' => 'PostsController@update'));
 
-Route::get('user/{username}', 'UsersController@show');
 
-Route::get('notifications', array('as'=>'messages', 'before' => 'auth', 'uses'=>'UsersController@notifications'));
-Route::post('notifications/{messageId}', array('as'=>'singlemessage', 'before' => 'auth', 'uses'=>'UsersController@singleNotification'));
-Route::get('notifications/{messageId}', function()
-{	
-	
-	$data = array(
-		"html" => '<blockquote class="single-notification"></blockquote>'
-	);
-	
-	return Response::json($data);
-});
+/*
+|--------------------------------------------------------------------------
+| All notification related routes are listed below
+|--------------------------------------------------------------------------
+*/
 
+//Display all notifications for current logged in user
+Route::get('notifications', array('as'=>'messages', 'before' => 'auth', 'uses'=>'NotificationController@getNotifications'));
+//Mark read of comments notifications
+Route::get('notifications/mark-all-as-read', array('before'=>'auth', 'uses'=>'NotificationController@getCommentsRead'));
+//Mark read of votes notifications
+Route::get('notifications/votes-read', array('before'=>'auth', 'uses'=>'NotificationController@getVotesRead'));
+//Mark read of single comment notification
+Route::post('notifications/{messageId}', array('as'=>'singlemessage', 'before' => 'auth', 'uses'=>'NotificationController@postSingleNotification'));
+//Return Ajax view (Big tick sign) of read single comment notification
+Route::get('notifications/{messageId}', 'NotificationController@postSingleNotification');
+//Save comments when user reply comments on notification page
 Route::post('notifications/reply-comment/{post_id}/{comment_id}', array('before'=>'auth', 'uses'=>'CommentsController@store'));
-
-Route::get('notifications/reply-comment/{post_id}/{comment_id}', function($post_id, $comment_id)
-{	
-	
-	$data = array(
-		"html" => Auth::user()->commentFormHtml($post_id, $comment_id)
-	);
-	
-	return Response::json($data);
-});
-
-Route::post('login', array('before'=>'csrf', 'uses'=>'UsersController@login'));
-Route::post('register', array('before'=>'csrf', 'uses'=>'UsersController@store'));
-Route::post('new-post', array('before'=>'csrf', 'uses'=>'UsersController@newPost'));
-
-Route::resource('posts', 'PostsController');
-
-Route::resource('users', 'UsersController');
-
-Route::resource('categories', 'CategoriesController');
-
-Route::resource('comments', 'CommentsController');
-
-Route::resource('commentnotifies', 'CommentnotifiesController');
-
-Route::resource('postvotenotifies', 'PostvotenotifiesController');
-
-Route::resource('parentcategories', 'ParentcategoriesController');
+//Get comment form for each notification
+Route::get('notifications/reply-comment/{post_id}/{comment_id}', 'CommentsController@replyCommentInNotification');

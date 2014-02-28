@@ -35,7 +35,7 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::guest('login');
+	if (Auth::guest()) return Redirect::action('UsersController@getLogin');
 });
 
 
@@ -77,4 +77,60 @@ Route::filter('csrf', function()
 	{
 		throw new Illuminate\Session\TokenMismatchException;
 	}
+});
+
+/*
+|--------------------------------------------------------------------------
+| All View Composers
+|--------------------------------------------------------------------------
+|
+|Generate category options, topic options and a unique id 
+|for new post page.
+|
+*/
+
+View::composer(array('users.newpost', 'posts.edit'), function($view)
+{
+	$catmodel = Category::get(array('id','category_name'));
+	
+	$catsHTML = '<select id="categoryid" name="categoryid" class="form-control selectpicker" data-live-search="true">';
+	
+	foreach ($catmodel as $key => $value){
+    	$catoptions[$value->id] = $value->category_name;
+	}
+
+	foreach( Parentcategory::all() as $parentcategory){
+		$catsHTML .= '<optgroup label="' . $parentcategory->parent_category_name . '">';
+		foreach ($parentcategory->categories as $subcategory) {
+			$catsHTML .= '<option value="' . $subcategory->id . '">' . $subcategory->category_name . '</option>';
+		}
+		$catsHTML .= '</optgroup>';
+	}
+
+	$catsHTML .= '</select>';
+	
+	$view->with('catsHTML', $catsHTML)->with('catoptions', $catoptions);
+});
+
+View::composer('users.newpost', function($view){
+    $view->with('uniqid', Post::genId());
+});
+
+View::composer('home', function($view){
+	$parentCats = Parentcategory::all();
+	$hotCats = Category::all();
+	$hotPostsToday= Post::hotPosts(1);
+	$hotPostsWeek = Post::hotPosts(7);
+	$hotPostsMonth = Post::hotPosts(31);
+
+    $view->with('hotCats', $hotCats)
+    	 ->with('hotPostsToday', $hotPostsToday)
+    	 ->with('hotPostsWeek', $hotPostsWeek)
+    	 ->with('hotPostsMonth', $hotPostsMonth)
+    	 ->with('parentCats', $parentCats);
+});
+
+View::composer('posts.allposts', function($view){
+	$parentCats = Parentcategory::all();
+    $view->with('parentCats', $parentCats);
 });
