@@ -41,6 +41,17 @@
 
 .label-default {
   @include label-variant($label-default-bg);
+  color: $label-default-color;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.label-default:hover {
+  @include label-variant($label-default-hover-bg);
+  color: darken($label-default-color, 10%);
+}
+
+.label-custom {
+  @include label-variant($label-custom-bg);
 }
 
 .label-primary {

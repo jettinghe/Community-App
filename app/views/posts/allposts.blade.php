@@ -4,15 +4,15 @@
 
 {{-- Breadcrumb Section--}}
 @if ( !empty($tagname) && $tagname !== '' )
-<h3>Posts Tagged by {{ $tagname}} </h3><hr>
+<h3 class="entries-header">Posts Tagged by {{ $tagname}} </h3><hr>
 @endif
 @if ( !empty($keywords) && $keywords !== '' )
-<h3>Search Results For: {{ $keywords}} </h3><hr>
+<h3 class="entries-header">Search Results For: {{ $keywords}} </h3><hr>
 @endif
 {{-- End Breadcrumb Section--}}
 
 {{-- Display Posts --}}
-@if( count($posts) > 0 )
+
 	<div id="post-entries" class="panel panel-default">
 		<div class="panel-heading">
 			<ul class="nav nav-pills topic-nav">
@@ -26,9 +26,9 @@
 				{{ HTML::link('topic/'.$parentCat->parent_category_uri, $parentCat->parent_category_name)}}</li>
 				@endforeach
 				{{-- End return topic links(parent category links)--}}
-				{{ Helper::getActiveClass('topics', '', '', false, '') }}<a href="{{ URL::to('topics') }}">All Topics</a></li>
+				{{ Helper::getActiveClass('topics', '', '', false, '') }}<a href="{{ URL::to('topics') }}"><i class="fa fa-th"></i> All</a></li>
 				@if ( Auth::check() )
-				{{ Helper::getActiveClass('user/followed-topics', '', '', false, '') }}<a href="{{ URL::to('user/followed-topics') }}">Followed Topics</a></li>
+				{{ Helper::getActiveClass('user/followed-topics', '', '', false, '') }}<a href="{{ URL::to('user/followed-topics') }}"><i class="fa fa-tasks"></i> Followed</a></li>
 				@endif
 			</ul>
 		</div>
@@ -62,40 +62,39 @@
 			</ul>
 		</div>
 		@endif
+		
+		@if( count($posts) > 0 )
 
 		<ul class="list-group">
-
-		@foreach($posts as $post)
-		
-		<li class="list-group-item">
-			<div class="post-entry">
-				<h2 class="panel-title">
-					<?php $post_link = Post::seolink($post->id); ?>
-					<a href="{{ $post_link }}">{{ $post->title }}</a>
-					<a href="{{ $post_link.'#comments' }}"><span class="badge pull-right">{{ $post->comments()->count() }}</span></a>
-				</h2>
-				<hr>
-				<span><i class="fa fa-user fa-large grey-icon"></i>
-				{{ $post->user->username }}</span>
-				<span class="grey-span">&#8226;</span>
-				<i class="fa fa-clock-o fa-large grey-icon"></i>
-				<span>
-					{{ $post->created_at->diffForHumans() }}
-				</span>
-				<span class="grey-span">&#8226;</span>
-				<a href="{{ URL::to('category/'. $post->category->category_uri) }}"><span class="label label-default">{{ $post->category->category_name }}</span></a>
-			</div>
-		</li>
-
-		@endforeach
-		
+			@foreach($posts as $post)
+			<li class="list-group-item">
+				<div class="post-entry">
+					<h2 class="panel-title">
+						<?php $post_link = Post::seolink($post->id); ?>
+						<a href="{{ $post_link }}">{{ $post->title }}</a>
+						<a href="{{ $post_link.'#comments' }}"><span class="badge pull-right">{{ $post->comments()->count() }}</span></a>
+					</h2>
+					<hr>
+					<span><i class="fa fa-user fa-large grey-icon"></i>
+					{{ $post->user->username }}</span>
+					<span class="grey-span">&#8226;</span>
+					<i class="fa fa-clock-o fa-large grey-icon"></i>
+					<span>
+						{{ $post->created_at->diffForHumans() }}
+					</span>
+					<span class="grey-span">&#8226;</span>
+					<a href="{{ URL::to('category/'. $post->category->category_uri) }}"><span class="label label-default">{{ $post->category->category_name }}</span></a>
+				</div>
+			</li>
+			@endforeach
 		</ul>
+		@else
+			<ul class="list-group"><li class="list-group-item">No posts found</li></ul>
+		@endif
 	</div>
-	{{ $posts->appends(array('q' => Input::get('q')))->links()}}
-
+	
+{{ $posts->appends(array('q' => Input::get('q')))->links()}}
 {{-- End Display Posts --}}
-@else
-	No posts found
-@endif
+
 
 @stop

@@ -28,8 +28,8 @@ $(document).ready(function() {
 				var	repliedCommentId = replyToCommentIdArray[index],
 					$commentThread = $('#comments .comment-container[data-comment-id=' + repliedCommentId +']');
 			    //replyToCommentHTML = replyToCommentHTML.concat('<a href="#comment-' + repliedCommentId + '"><span class="label label-default">@' + $commentThread.find('.reply-comment-button').data('at-name') + ' ( ' + $commentThread.data('counter') + ' 楼 )</span></a> ');
-				currentCommentContent = currentCommentContent.replace('@' + $commentThread.find('.reply-comment-button').data('at-name') + '(' + $commentThread.data('counter') + '楼)', 
-												'<a href="#comment-' + repliedCommentId + '"><span class="label label-default">@' + $commentThread.find('.reply-comment-button').data('at-name') + ' ( ' + $commentThread.data('counter') + ' 楼 )</span></a> ');
+				currentCommentContent = currentCommentContent.replace('@' + $commentThread.find('.reply-comment-button').data('at-name') + '(#' + $commentThread.data('counter') + ')', 
+												'<a href="#comment-' + repliedCommentId + '"><span class="label label-default">@' + $commentThread.find('.reply-comment-button').data('at-name') + ' (#' + $commentThread.data('counter') + ')</span></a> ');
 			}
 
 			console.log(currentCommentContent);
@@ -56,7 +56,7 @@ $(document).ready(function() {
 
 			//currentReplyingUser = currentReplyingUser.concat()
 			var currentReplyingUserArray = currentReplyingUser.toString().split(",  ");
-			var currentReplyingPlaceholder = '@' + replyCommentUser + '(' + currentLevelNumber + '楼)';
+			var currentReplyingPlaceholder = '@' + replyCommentUser + '(#' + currentLevelNumber + ')';
 			if( currentReplyingUserArray.indexOf(currentReplyingPlaceholder) == -1 ) {
 				currentReplyingUser = currentReplyingUser.concat( (currentReplyingUser == '') ? currentReplyingPlaceholder : ',  '+ currentReplyingPlaceholder );
 			}
@@ -93,7 +93,7 @@ $(document).ready(function() {
 	});
 
 	$('.selectpicker').selectpicker();
-	
+
 	$('li.dropdown .dropdown-animation').on('click', function(){
 		$(this).find('i').toggleClass('fa-angle-down').toggleClass('fa-angle-up');
 	});

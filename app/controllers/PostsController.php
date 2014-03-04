@@ -154,6 +154,7 @@ class PostsController extends BaseController {
         	$post = Post::find($id);
 
             $post->category_id = Input::get('categoryid');
+            $post->parentcategory_id = Category::find(Input::get('categoryid'))->parentcategory->id;
             $post->tags = Input::get('tags');
             $post->title = Input::get('title');
             $post->content = Input::get('content');

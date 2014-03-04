@@ -5,12 +5,18 @@ $grey-color: #c9c9c9;
 $dark-color: #656565;
 
 body {
-	padding-top: 70px;
+    padding-top: 70px;
+    background-color: #fafafa;
 }
 
 h1.post-header {
     font-size: 24px;
     margin-bottom: 20px;
+    margin-top: 0!important;
+}
+
+.entries-header {
+    margin-top: 0!important;
 }
 
 .post-entry, 
@@ -18,8 +24,16 @@ h1.post-header {
     padding: 15px 0;
 }
 
+.post-entry {
+    padding-left: 7px;
+}
+
 #comments {
     margin-top: 25px;
+}
+
+#content {
+    padding-top: 12px;
 }
 
 a:hover,
@@ -30,6 +44,18 @@ a:focus {
 
 .white-icon {
     color: #fff;
+}
+
+.brand-span,
+.brand-icon,
+.brand-link {
+   color: $brand-custom;
+}
+
+.orange-span,
+.orange-icon,
+.orange-link {
+   color: $brand-warning;
 }
 
 .grey-span,
@@ -57,11 +83,11 @@ a:focus {
 
 .label-tags {
     display: inline-block;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
 }
 
 .notification-badge {
-    background-color: $brand-info;
+    background-color: $brand-warning;
 }
 
 .small-margin-right {
@@ -112,7 +138,7 @@ a:focus {
 }
 
 #new-comment .form-group {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 
 .topic-nav > li > a {
@@ -127,8 +153,8 @@ a:focus {
     border-radius: 3px;
 }
 
-#post-entries {
-    margin-top: 13px;
+.panel-title {
+    font-weight: 600;
 }
 
 .panel-body-cats {
@@ -137,15 +163,16 @@ a:focus {
 }
 
 .topic-nav > li.active-topic-for-child-category > a {
-    background-color: lighten($dark-color, 20%);
+    background-color: lighten($dark-color, 40%);
 }
 
 .cancel-reply-button {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 #footer {
-    background: #656565;
+    background: #fff;
+    box-shadow: 0 5px 5px 5px rgba(0, 0, 0, 0.1);
     padding: 20px 0;
     margin-top: 50px;
 }

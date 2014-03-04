@@ -59,14 +59,15 @@
 	<div class="post-tags">
 	@if ( ! empty( $post->tags) && $post->tags !== '')
 		@foreach( explode(',', $post->tags) as $tag)
-			<a href="{{ URL::to("tag/$tag")}}"><span class="label label-default"><i class="fa fa-tag"></i>{{ $tag }}</span></a>
+			<a href="{{ URL::to("tag/$tag")}}"><span class="label label-default"><i class="fa fa-tag"></i> {{ $tag }}</span></a>
 		@endforeach
 	@endif
 	</div>
 	<a name="comments" class="fixed-header-anchor"></a>
 	<div id="comments" data-user-login="{{ Auth::check() ? 'yes': 'no'}}">
 		<div class="panel panel-default">
-		  <div class="panel-heading">Comments</div>
+		@if(count($post->comments) > 0)
+		<div class="panel-heading">Comments</div>
 		<ul class="list-group">
 		@foreach ($post->comments as $key => $comment)
 			<li class="list-group-item">
@@ -94,6 +95,9 @@
 			</li>
 		@endforeach
 		</ul>
+		@else
+		  <div class="panel-heading">No Comments Yet</div>
+		@endif
 		</div>
 		@if (Auth::check())
 			<a name="comment-form"></a>

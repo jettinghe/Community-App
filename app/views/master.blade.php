@@ -14,8 +14,9 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-          {{ HTML::style('/css/style.css') }}
-      {{ HTML::style('/css/font-awesome-4.0.3/css/font-awesome.min.css') }}
+        {{ HTML::style('/css/style.css') }}
+        {{ HTML::style('/css/font-awesome-4.0.3/css/font-awesome.min.css') }}
+        {{ HTML::style('http://fonts.googleapis.com/css?family=Lato:300+600') }}
   
         {{ HTML::script('/js/jquery-1.10.2.min.js') }}
         {{ HTML::script('/js/modernizr-2.6.2.min.js') }}
@@ -59,18 +60,19 @@
                     
                     <ul class="nav navbar-nav navbar-right">
                         @if( ! Auth::check())
-                          <li>{{ HTML::link('user/register', 'Register') }}</li>
+                          {{ Helper::getActiveClass('user/register', '', '', false, '') }}{{ HTML::link('user/register', 'Register') }}</li>
                           <li>{{ link_to("#", 'Login', array('data-toggle' => 'modal', 'data-target' => '#login-form')) }}</li>
                         @else
                         <li class="dropdown">
                             <?php $countNotifications = Auth::user()->countNotifications(); ?>
-                            <a href="#" class="dropdown-toggle dropdown-animation" data-toggle="dropdown"><i class="fa fa-smile-o fa-fw dark-icon"></i>Hi, {{ Auth::user()->username }} <span class="badge notification-badge">{{ $countNotifications }}</span> <i class="fa fa-angle-down"></i></a>
+                            <a href="#" class="dropdown-toggle dropdown-animation" data-toggle="dropdown"><i class="fa fa-smile-o fa-fw white-icon"></i>Hi, {{ Auth::user()->username }} <span class="badge notification-badge">{{ $countNotifications }}</span> <i class="fa fa-angle-down"></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="{{ URL::to('notifications')}}"><i class="fa fa-lightbulb-o fa-fw dark-icon small-margin-right"></i>Notifications <span class="badge notification-badge">{{ $countNotifications }}</span></a></li>
                                 <li><a href="{{ URL::to('user/new-post') }}"><i class="fa fa-pencil fa-fw dark-icon small-margin-right"></i>New Post</a></li>
                                 <li><a href="{{ URL::to('user/my-posts') }}"><i class="fa fa-files-o fa-fw dark-icon small-margin-right"></i>My Posts</a></li>
-                                <li><a href="{{ URL::to('user/favourite-posts') }}"><i class="fa fa-files-o fa-fw dark-icon small-margin-right"></i>Favourite Posts</a></li>
                                 <li><a href="{{ URL::to('user/my-comments') }}"><i class="fa fa-comments-o fa-fw dark-icon small-margin-right"></i>My Comments</a></li>
+                                <li><a href="{{ URL::to('user/followed-topics') }}"><i class="fa fa-tasks fa-fw dark-icon small-margin-right"></i>Followed Topics</a></li>
+                                <li><a href="{{ URL::to('user/favourite-posts') }}"><i class="fa fa-heart-o fa-fw dark-icon small-margin-right"></i>Favourite Posts</a></li>
                                 <li><a href="{{ URL::to('user/logout') }}"><i class="fa fa-sign-out fa-fw dark-icon small-margin-right"></i>Log Out</a></li>
                             </ul>
                         </li>
@@ -98,7 +100,7 @@
         </div>
 
         <footer id="footer" class="text-center">
-          <span class="grey-span">Laravel Community App</span>
+          <span class="brand-span small-margin-right">Laravel Community App &copy; 2014</span><a href="https://github.com/jettinghe/Community-App" class="dark-link"><span>View On Github</span></a>
         </footer>
 
         @if( ! Auth::check() )
