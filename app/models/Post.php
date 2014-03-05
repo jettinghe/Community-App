@@ -24,8 +24,11 @@ class Post extends Basemodel {
     public static function seoLink($id){ 
         $post = Post::find($id);
         $title = $post->title;
-        $seotitle = strtolower(str_replace(array(' ', '<', '>', '&', '{', '}', '*'), '-', $title));
-        $seolink = URL::to("post/$post->id/" . $seotitle);
+        $seoTitle = strtolower($title);
+        $seoTitle = preg_replace("/[^a-z0-9_\s-]/", "", $seoTitle);
+        $seoTitle = preg_replace("/[\s-]+/", " ", $seoTitle);
+        $seoTitle = preg_replace("/[\s_]/", "-", $seoTitle);
+        $seolink = URL::to("post/$post->id/" . $seoTitle);
         return $seolink; 
     } 
 

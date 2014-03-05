@@ -49,8 +49,10 @@ Route::get('category/{category}', 'PostsController@postsByCategory');
 Route::get('topic/{parentcategory}', 'PostsController@postsByTopic');
 //Display single post
 Route::get('post/{id}/{postTitle}', 'PostsController@show');
+Route::get('post/{id}', 'PostsController@show');
 //Post comment on a single post
 Route::post('post/{id}/{postTitle}', 'CommentsController@store');
+Route::post('post/{id}', 'CommentsController@store');
 //Edit single post view
 Route::get('edit/post/{id}', array('as'=>'edit', 'before'=>'auth', 'uses'=>'PostsController@edit'));
 //Update single post
