@@ -13,7 +13,7 @@
 	{{ Form::token() }}
 	<input type="hidden" name ="postid" id="postid" value="{{$post->id}}"/>
 	<div class="form-group">
-	{{ Form::textarea('content', Input::old('content'), array('required', 'id' => 'comment-textarea','class' => 'form-control')) }}
+	{{ Form::textarea('content', Input::old('content'), array('required', 'id' => 'comment-textarea','class' => 'form-control', 'novalidate')) }}
 	</div>
 	{{ Form::submit('Add Comment', array('class' => 'btn btn-default')) }}
 </fieldset>
