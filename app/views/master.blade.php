@@ -14,12 +14,12 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        {{ HTML::style('/css/style.css') }}
+		{{ HTML::style('/css/style.css') }}
         {{ HTML::style('/css/font-awesome-4.0.3/css/font-awesome.min.css') }}
-        {{ HTML::style('http://fonts.googleapis.com/css?family=Lato:300+600') }}
-  
-        {{ HTML::script('/js/jquery-1.10.2.min.js') }}
-        {{ HTML::script('/js/modernizr-2.6.2.min.js') }}
+        {{ HTML::style('http://fonts.googleapis.com/css?family=Lato:400+700') }}
+
+  		{{ HTML::script('/js/jquery-1.10.2.min.js') }}
+  		{{ HTML::script('/js/modernizr-2.6.2.min.js') }}
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -52,12 +52,12 @@
                         </div>
                         {{ Form::close() }}
                     </div>
-                    
+
                     <ul class="nav navbar-nav">
                         {{ Helper::getActiveClass('topics', '', '', false, '') }}<a href="{{ URL::to('topics')}}">Topics</a></li>
-                        <li><a href="#">Explore</a></li>
+                        {{ Helper::getActiveClass('explore', '', '', false, '') }}<a href="{{ URL::to('explore')}}">Explore</a></li>
                     </ul>
-                    
+
                     <ul class="nav navbar-nav navbar-right">
                         @if( ! Auth::check())
                           {{ Helper::getActiveClass('user/register', '', '', false, '') }}{{ HTML::link('user/register', 'Register') }}</li>
@@ -82,7 +82,7 @@
                 </div>
             </nav>
         </header>
-        
+
         <div id="content">
             <div class="container">
                 <div class="row">

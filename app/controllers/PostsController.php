@@ -90,9 +90,17 @@ class PostsController extends BaseController {
 	    }
 	}
 
+	/**
+	 * Display all topics in a page
+	 * @return objects links to all topics(categories)
+	 */
+	public function explore(){
+		return View::make('posts.explore');
+	}
+
     /**
      * Search posts with keywords
-     * @param  String $keywords 
+     * @param  String $keywords
      * @return Post objects array
      */
     public function search()
@@ -102,7 +110,7 @@ class PostsController extends BaseController {
     		return Redirect::back()->with('warningMessage', 'Please Specify A Search Query!');
     	}else{
 	    	$keyword_tokens = explode(' ', preg_replace('!\s+!', ' ', $keywords));
-		    
+
 		    $matched_posts = Post::where('title', 'LIKE', '%'. $keyword_tokens[0] .'%');
 
 		    if ( count($keyword_tokens) > 1 ){
@@ -119,7 +127,7 @@ class PostsController extends BaseController {
 	        			->with('pageTitle', "Search Results For: $keywords | " . SiteTitle);
 	        }else{
 	        	return Redirect::back()->with('warningMessage', "No results found for: $keywords");
-	        }	
+	        }
 	    }
     }
 
@@ -147,7 +155,7 @@ class PostsController extends BaseController {
 	 */
 	public function update($id)
 	{
-		$validation = Post::validate(Input::all());  
+		$validation = Post::validate(Input::all());
 
         if ($validation->passes()) {
 
@@ -159,12 +167,12 @@ class PostsController extends BaseController {
             $post->title = Input::get('title');
             $post->content = Input::get('content');
             $post->updated_at = new DateTime();
-            
+
             $post->save();
-            
+
             return Redirect::route('home')
                 ->with('successMessage', "Your Post Has Been Updated!");
-        
+
         } else {
             return Redirect::back()->withErrors($validation)->withInput();;
         }

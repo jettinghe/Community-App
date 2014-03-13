@@ -79,12 +79,13 @@ Route::filter('csrf', function()
 	}
 });
 
+
 /*
 |--------------------------------------------------------------------------
 | All View Composers
 |--------------------------------------------------------------------------
 |
-|Generate category options, topic options and a unique id 
+|Generate category options, topic options and a unique id
 |for new post page.
 |
 */
@@ -92,9 +93,9 @@ Route::filter('csrf', function()
 View::composer(array('users.newpost', 'posts.edit'), function($view)
 {
 	$catmodel = Category::get(array('id','category_name'));
-	
+
 	$catsHTML = '<select id="categoryid" name="categoryid" class="form-control selectpicker" data-live-search="true">';
-	
+
 	foreach ($catmodel as $key => $value){
     	$catoptions[$value->id] = $value->category_name;
 	}
@@ -108,7 +109,7 @@ View::composer(array('users.newpost', 'posts.edit'), function($view)
 	}
 
 	$catsHTML .= '</select>';
-	
+
 	$view->with('catsHTML', $catsHTML)->with('catoptions', $catoptions);
 });
 
@@ -130,7 +131,14 @@ View::composer('home', function($view){
     	 ->with('parentCats', $parentCats);
 });
 
-View::composer('posts.allposts', function($view){
+View::composer(array('posts.allposts', 'posts.explore'), function($view){
 	$parentCats = Parentcategory::all();
-    $view->with('parentCats', $parentCats);
+	if ( Auth::check() ){
+    	$followedCategoryArray = explode(',', Auth::user()->followed_categories);
+    	$followedCategories = Category::whereIn('category_name', $followedCategoryArray)->lists('category_uri', 'category_name');
+    	$view->with('parentCats', $parentCats)
+    	 	->with('followedCats', $followedCategories);
+    }else{
+    	$view->with('parentCats', $parentCats);
+    }
 });

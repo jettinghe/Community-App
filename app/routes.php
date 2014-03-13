@@ -57,7 +57,8 @@ Route::post('post/{id}', 'CommentsController@store');
 Route::get('edit/post/{id}', array('as'=>'edit', 'before'=>'auth', 'uses'=>'PostsController@edit'));
 //Update single post
 Route::put('edit/post/{id}', array('before' => 'csrf', 'uses' => 'PostsController@update'));
-
+//Full topics page
+Route::get('explore', 'PostsController@explore');
 
 /*
 |--------------------------------------------------------------------------

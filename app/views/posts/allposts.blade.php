@@ -28,11 +28,24 @@
 				{{-- End return topic links(parent category links)--}}
 				{{ Helper::getActiveClass('topics', '', '', false, '') }}<a href="{{ URL::to('topics') }}"><i class="fa fa-th"></i> All</a></li>
 				@if ( Auth::check() )
-				{{ Helper::getActiveClass('user/followed-topics', '', '', false, '') }}<a href="{{ URL::to('user/followed-topics') }}"><i class="fa fa-tasks"></i> Followed</a></li>
+					@if ( !empty($followedCats) && $followedCats !== '')
+					<div class="btn-group">
+					  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+					    Followed Topics <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" role="menu">
+					    {{ Helper::getActiveClass('user/followed-topics', '', '', false, '') }}<a href="{{ URL::to('user/followed-topics') }}">All Followed Topics</a></li>
+					    <li class="divider"></li>
+					    @foreach($followedCats as $key => $followedCat)
+					    	{{ Helper::getActiveClass($followedCat, 'category', '/', false, '') }}<a href="{{ URL::to('category/'. $followedCat) }}">{{ $key }}</a></li>
+					    @endforeach
+					  </ul>
+					</div>
+					@endif
 				@endif
 			</ul>
 		</div>
-		
+
 		@if ( !empty($parentcategory) && $parentcategory !== '' )
 		<div class="panel-body panel-body-cats">
 			<ul class="nav nav-pills cat-nav">
@@ -62,7 +75,7 @@
 			</ul>
 		</div>
 		@endif
-		
+
 		@if( count($posts) > 0 )
 
 		<ul class="list-group">
@@ -92,7 +105,7 @@
 			<ul class="list-group"><li class="list-group-item">No posts found</li></ul>
 		@endif
 	</div>
-	
+
 {{ $posts->appends(array('q' => Input::get('q')))->links()}}
 {{-- End Display Posts --}}
 

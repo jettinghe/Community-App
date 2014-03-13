@@ -7,7 +7,6 @@ class UsersController extends BaseController {
         $this->beforeFilter('auth', array('on'=>'get', 'except'=>array('getLogin', 'getActivate', 'getRegister', 'getProfile')));
     }
 
-
     public function getLogin(){
         if ( !Auth::check() ){
             return View::make('users.login')
@@ -16,11 +15,11 @@ class UsersController extends BaseController {
             return Redirect::route('home');
         }
     }
-    /**
-     * User login function
-     * @return Return Response/Redirect 
-     */
-    public function postLogin() {
+	/**
+	 * User login function
+	 * @return Return Response/Redirect
+	 */
+	public function postLogin() {
         $email = Input::get('email');
         $user = User::where('email', '=', $email)->first();
         if($user){
@@ -51,6 +50,10 @@ class UsersController extends BaseController {
         }
     }
 
+    /**
+     * return view for post new stuff.
+     * @return view new post
+     */
     public function getNewPost(){
         return View::make('users.newpost')
             ->with('pageTitle', 'New Post | ' . SiteTitle);
@@ -58,16 +61,16 @@ class UsersController extends BaseController {
 
     /**
      * User add new post
-     * @return Response 
+     * @return Response
      */
     public function postNewPost(){
 
-        $validation = Post::validate(Input::all());                                       
+        $validation = Post::validate(Input::all());
         $postid = Input::get('postid');
         $isEmpty = trim(strip_tags(Input::get('content'))) == '';
 
         if ($validation->passes() && !$isEmpty) {
-            
+
             $post = new Post;
             $post->id = $postid;
             $post->user_id = Auth::user()->id;
@@ -79,12 +82,12 @@ class UsersController extends BaseController {
 
             $post->created_at = new DateTime();
             $post->updated_at = new DateTime();
-            
+
             $post->save();
-            
+
             return Redirect::route('home')
                 ->with('successMessage', "Your Ad Has Been Posted!");
-        
+
         } else {
             return $isEmpty ? Redirect::action('UsersController@getNewPost')->withErrors($validation)->with('warningMessage', '<ul><li>Content is empty.</li></ul>')->withInput()
                              : Redirect::action('UsersController@getNewPost')->withErrors($validation)->withInput();
@@ -111,7 +114,7 @@ class UsersController extends BaseController {
         $data = array(
             "html" => '<blockquote class="single-notification"></blockquote>'
         );
-        
+
         return Response::json($data);
     }
 
@@ -135,7 +138,7 @@ class UsersController extends BaseController {
 
     /**
      * Mark all notifications as read
-     * @return Response 
+     * @return Response
      */
     public function getCommentsRead(){
         if ( Auth::check() ){
@@ -151,7 +154,7 @@ class UsersController extends BaseController {
 
     /**
      * Mark all vote notifications as read
-     * @return Response 
+     * @return Response
      */
     public function getVotesRead(){
         if ( Auth::check() ){
@@ -166,7 +169,7 @@ class UsersController extends BaseController {
 
     /**
      * User logs out function
-     * @return Response Redirect 
+     * @return Response Redirect
      */
     public function getLogout() {
         if (Auth::check()) {
@@ -177,7 +180,7 @@ class UsersController extends BaseController {
         }
     }
 
-    /**
+	/**
      * Activate user registration.
      *
      * @return Response
@@ -204,17 +207,17 @@ class UsersController extends BaseController {
             ->with('pageTitle', 'Register | ' . SiteTitle);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function postRegister()
-    {
-        $validation = User::validate(Input::all());
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function postRegister()
+	{
+		$validation = User::validate(Input::all());
 
         if ($validation->passes()) {
-            
+
             $email = Input::get('email');
             $username = Input::get('username');
             $user = new User;
@@ -234,7 +237,7 @@ class UsersController extends BaseController {
 
             //send registration confirmation email to user
             $data['email'] = $email;
-            $data['activate_link'] = URL::to('user/activate?uid=' . $activation_key); 
+            $data['activate_link'] = URL::to('user/activate?uid=' . $activation_key);
             $activation = array();
             $activation['email'] = $email;
             $activation['subject'] = 'Confirm Account Registration on Laravel Community';
@@ -249,15 +252,15 @@ class UsersController extends BaseController {
             }else {
                 return Redirect::action('UsersController@getRegister')->withErrors($validation)->withInput();
             }
-    }
+	}
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function getProfile($username){
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getProfile($username){
         $user = User::where('username', '=', $username)->first();
         $userPosts = $user->posts()->orderBy('created_at', 'desc')->take(3)->get();
         $userComments = $user->comments()->orderBy('created_at', 'desc')->take(3)->get();
@@ -265,8 +268,8 @@ class UsersController extends BaseController {
         return View::make('users.show')->with('username', $username)
                     ->with('userPosts', $userPosts)
                     ->with('userComments', $userComments)
-                    ->with('pageTitle', "Member Profile: $username | " . SiteTitle);;
-    }
+                    ->with('pageTitle', "User: $username | " . SiteTitle);;
+	}
 
     /**
      * Return logged in user's own posted posts.
@@ -295,9 +298,13 @@ class UsersController extends BaseController {
 
     public function getFollowedTopics(){
         if ( !empty(Auth::user()->followed_categories) && Auth::user()->followed_categories !== ''){
-            $followed_categories = Category::whereIn('category_name', explode(',', Auth::user()->followed_categories))->lists('id');
-            $posts = Post::whereIn('category_id', $followed_categories)->orderBy('created_at', 'desc')->paginate(8);
-            return View::make('posts.allposts')->with('posts', $posts)->with('pageTitle', 'My Followed Topics | ' . SiteTitle);
+            $followedCategoryArray = explode(',', Auth::user()->followed_categories);
+            $followedCategoryIds = Category::whereIn('category_name', $followedCategoryArray)->lists('id');
+            $followedCategories = Category::whereIn('category_name', $followedCategoryArray)->lists('category_uri', 'category_name');
+            $posts = Post::whereIn('category_id', $followedCategoryIds)->orderBy('created_at', 'desc')->paginate(8);
+            return View::make('posts.allposts')->with('posts', $posts)
+                                               ->with('followedCats', $followedCategories)
+                                               ->with('pageTitle', 'My Followed Topics | ' . SiteTitle);
         }else{
             return Redirect::back()->with('warningMessage', "You haven't followed any topics yet. Explore and follow your favourites." );
         }
@@ -324,7 +331,7 @@ class UsersController extends BaseController {
         $data = array(
             "html" => '<a href="'. URL::to('user/unfollow-category/'. $category) . '" class="unfollow-category ajax-button btn btn-xs btn-warning pull-right" data-method="post" data-replace=".unfollow-category"><span><i class="fa fa-times-circle-o"></i> UnFollow ' . $category .'</a>'
         );
-        
+
         return Response::json($data);
     }
 
@@ -343,7 +350,7 @@ class UsersController extends BaseController {
         $data = array(
             "html" => '<a href="'. URL::to('user/follow-category/'.$category) . '" class="follow-category ajax-button btn btn-xs btn-default pull-right" data-method="post" data-replace=".follow-category"><span><i class="fa fa-check-circle-o"></i> Follow ' .$category .'</a>'
         );
-        
+
         return Response::json($data);
     }
 
@@ -359,7 +366,7 @@ class UsersController extends BaseController {
         $data = array(
             "html" => '<a href="'. URL::to('user/unfavourite-post/'. $id) . '" class="unfavourite-post ajax-button btn btn-xs btn-warning pull-right small-margin-right" data-method="post" data-replace=".unfavourite-post"><span><i class="fa fa-star"></i></a>'
         );
-        
+
         return Response::json($data);
     }
 
@@ -378,7 +385,7 @@ class UsersController extends BaseController {
         $data = array(
             "html" => '<a href="'. URL::to('user/favourite-post/'.$id) . '" class="favourite-post ajax-button btn btn-xs btn-default pull-right small-margin-right" data-method="post" data-replace=".favourite-post"><span><i class="fa fa-star-o"></i></a>'
         );
-        
+
         return Response::json($data);
     }
 
